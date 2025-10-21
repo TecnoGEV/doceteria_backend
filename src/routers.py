@@ -14,6 +14,10 @@ from src.models import (
 )
 router = APIRouter()
 
+@router.get("/")
+def read_root():
+    return {"message": "Hello World"}
+
 def get_db():
     """
     Generator for database sessions.
