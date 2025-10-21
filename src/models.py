@@ -1,12 +1,12 @@
 """SQLAlchemy ORM models for the doceteria backend."""
 
-from typing import List
-
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
+
 class Base(DeclarativeBase):
-    """ Base declarativa moderna (SQLAlchemy 2.0) """
+    """Base declarativa moderna (SQLAlchemy 2.0)"""
+
     pass
 
 
@@ -28,12 +28,13 @@ class Ingrediente(Base):
         nome (str): O nome do ingrediente.
         receitas (List[Receita]): A lista de receitas que usam o ingrediente.
     """
+
     __tablename__ = "ingredientes"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     nome: Mapped[str] = mapped_column(String(100))
     # Relação inversa com Receita
-    receitas: Mapped[List["Receita"]] = relationship(
+    receitas: Mapped[list["Receita"]] = relationship(
         "Receita", secondary=receita_ingrediente_table, back_populates="ingredientes"
     )
 
@@ -55,6 +56,7 @@ class Receita(Base):
         lucro_sugerido (float): O lucro sugerido da receita.
         ingredientes (List[Ingrediente]): A lista de ingredientes usados na receita.
     """
+
     __tablename__ = "receitas"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
@@ -69,9 +71,10 @@ class Receita(Base):
     lucro_sugerido: Mapped[float] = mapped_column(Float)
 
     # Relação Many-to-Many com Ingredientes
-    ingredientes: Mapped[List["Ingrediente"]] = relationship(
+    ingredientes: Mapped[list["Ingrediente"]] = relationship(
         "Ingrediente", secondary=receita_ingrediente_table, back_populates="receitas"
     )
+
 
 class Categoria(Base):
     """
@@ -81,12 +84,15 @@ class Categoria(Base):
         id (int): O ID da categoria.
         categoria (str): O nome da categoria.
     """
+
     __tablename__ = "categorias"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     categoria: Mapped[str] = mapped_column(String(50))
 
-    produtos: Mapped[List["Produto"]] = relationship("Produto", back_populates="categoria")
+    produtos: Mapped[list["Produto"]] = relationship(
+        "Produto", back_populates="categoria"
+    )
 
 
 class Produto(Base):
@@ -108,17 +114,21 @@ class Produto(Base):
     data_validade: Mapped[str] = mapped_column(String(50))
     marca: Mapped[str] = mapped_column(String(50))
     codigo_barras: Mapped[str] = mapped_column(String(50), unique=True, nullable=True)
-    preco_unidade: Mapped[float] = mapped_column(Float)  # Preço unitário do produto em float
-    unidade: Mapped[str] = mapped_column(String(50))  # Unidade de medida do produto como str
-    quantidade: Mapped[float] = mapped_column(Float)  # Quantidade do produto em float
-    
-    categoria_id: Mapped[int] = mapped_column(ForeignKey("categorias.id"), nullable=True)
-    categoria: Mapped["Categoria"] = relationship("Categoria", back_populates="produtos")  # Relação com CategoriaScherma
+    preco_unidade: Mapped[float] = mapped_column(Float)
+    unidade: Mapped[str] = mapped_column(String(50))
+    quantidade: Mapped[float] = mapped_column(Float)
+
+    categoria_id: Mapped[int] = mapped_column(
+        ForeignKey("categorias.id"), nullable=True
+    )
+    categoria: Mapped["Categoria"] = relationship(
+        "Categoria", back_populates="produtos"
+    )
     # Uma receita pode gerar vários produtos (1-N)
     receita_id: Mapped[int] = mapped_column(ForeignKey("receitas.id"), nullable=True)
     receita: Mapped["Receita"] = relationship("Receita")
 
-    pedidos: Mapped[List["Pedido"]] = relationship("Pedido", back_populates="produto")
+    pedidos: Mapped[list["Pedido"]] = relationship("Pedido", back_populates="produto")
 
 
 class Venda(Base):
@@ -131,13 +141,14 @@ class Venda(Base):
         telefone (str): O telefone do cliente da venda.
         pedidos (List[Pedido]): A lista de pedidos relacionados à venda.
     """
+
     __tablename__ = "vendas"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     nome_cliente: Mapped[str] = mapped_column(String(100))
     telefone: Mapped[str] = mapped_column(String(20))
 
-    pedidos: Mapped[List["Pedido"]] = relationship("Pedido", back_populates="venda")
+    pedidos: Mapped[list["Pedido"]] = relationship("Pedido", back_populates="venda")
 
 
 class Pedido(Base):
@@ -153,6 +164,7 @@ class Pedido(Base):
         venda (Venda): A venda relacionada ao pedido.
         produto (Produto): O produto relacionado ao pedido.
     """
+
     __tablename__ = "pedidos"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

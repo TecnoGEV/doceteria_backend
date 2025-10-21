@@ -13,4 +13,50 @@ dependencies = [
     "uniconv>=1.0.1",
     "uvicorn>=0.38.0",
     "httpx>=0.27.0",
+    "isort>=7.0.0",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+fix = true
+
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "C4", "N", "UP"]
+ignore = []
+extend-select = ["B"]
+
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+combine_as_imports = true
+
+[tool.black]
+line-length = 88
+target-version = ["py311"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --strict-paths"
+pythonpath = ["."]
+
+[tool.taskipy.tasks]
+# Lint e formatação
+lint = "uv run ruff check ."
+fix = "uv run ruff check . --fix"
+format = "uv run black . && uv run isort ."
+check = "uv run ruff check --diff ."
+# Run test
+test = "uv run pytest"
+
+[dependency-groups]
+dev = [
+    "black>=25.9.0",
+    "pytest>=8.4.2",
+    "ruff>=0.14.1",
+    "taskipy>=1.14.1",
 ]
