@@ -49,6 +49,8 @@ uv run task server
 ```
 
 Isso iniciará o servidor de desenvolvimento.
+O servidor estara escutando na porta padrao: 8000
+Para acessar o swagger va ate a rota  **/docs**
 
 ## Como Rodar os Testes
 
