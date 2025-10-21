@@ -1,6 +1,6 @@
 # Doceteria Backend
 
-Backend para a Doceteria da Kenzie.
+Backend para a Doceteria.
 
 ## Instalação
 
