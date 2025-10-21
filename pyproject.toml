@@ -1,0 +1,15 @@
+[project]
+name = "doceteria-backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.119.1",
+    "pandas>=2.3.3",
+    "pytest>=8.4.2",
+    "sqlalchemy>=2.0.44",
+    "taskipy>=1.14.1",
+    "uniconv>=1.0.1",
+    "uvicorn>=0.38.0",
+]
