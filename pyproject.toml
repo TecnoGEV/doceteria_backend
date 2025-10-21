@@ -52,6 +52,8 @@ format = "uv run black . && uv run isort ."
 check = "uv run ruff check --diff ."
 # Run test
 test = "uv run pytest"
+# Run server
+server = "uv run uvicorn src.main:app --reload"
 
 [dependency-groups]
 dev = [

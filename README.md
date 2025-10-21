@@ -42,6 +42,12 @@ Para executar o projeto, utilize o seguinte comando:
 uv run uvicorn src.main:app --reload
 ```
 
+ou
+
+```bash
+uv run task server
+```
+
 Isso iniciará o servidor de desenvolvimento.
 
 ## Como Rodar os Testes
