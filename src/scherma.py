@@ -3,14 +3,12 @@ from typing import List
 
 from pydantic import BaseModel
 
-
 class ReceitaScherma(BaseModel):
     """_summary_
 
     Args:
        Scherma BaseModel (_type_): _description_
     """
-    id: int
     nome_receita: str
     porcao_rendimento: str
     ingrediente: List[str]
@@ -35,7 +33,6 @@ class CategoriaScherma(BaseModel):
     Args:
        Scherma BaseModel (_type_): _description_
     """
-    id: int
     categoria: str
 
     class Config:    
@@ -49,7 +46,6 @@ class ProdutoScherma(BaseModel):
     Args:
        Scherma BaseModel (_type_): _description_
     """
-    id: int
     nome_produto: str
     data_validade: str
     marca: str

@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import update
@@ -26,7 +26,7 @@ def get_db():
     finally:
         db.close()
 
-@router.get("/",
+@router.get("/receitas",
     tags=["receita"],
     name="receita_index",
     summary="Receita Index",
@@ -35,12 +35,20 @@ def get_db():
     status_code=200,
     response_model=List[ReceitaScherma],
     )
-async def receita_index(db: Session = Depends(get_db)) -> List[ReceitaModel]:
-    """Lista todas as receitas cadastradas."""
-    return db.query(ReceitaModel).all()
+def listar_receitas(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=100),
+    db: Session = Depends(get_db)
+):
+    """
+    Retorna uma lista paginada de receitas.
+    """
+    offset = (page - 1) * page_size
+    receitas = db.query(ReceitaModel).offset(offset).limit(page_size).all()
+    return receitas
 
 
-@router.post("/",
+@router.post("/receitas",
     tags=["receita"],
     name="receita_create",
     summary="Receita Create",
@@ -66,7 +74,7 @@ async def create_receita(receita: ReceitaScherma, db: Session = Depends(get_db))
     return db_receita
 
 
-@router.get("/{id}", 
+@router.get("/receita/{id}", 
     tags=["receita"],
     name="receita_show",
     summary="Receita Show",
@@ -88,7 +96,7 @@ async def show_receita(id: int, db: Session = Depends(get_db)) -> (ReceitaModel 
     return db.query(ReceitaModel).filter(ReceitaModel.id == id).first()
 
 
-@router.patch("/{id}",
+@router.patch("/receita/{id}",
     tags=["receita"],
     name="receita_update",
     summary="Receita Update",
@@ -119,7 +127,7 @@ async def update_receita(id: int, receita: ReceitaScherma, db: Session = Depends
     return db.query(ReceitaModel).filter(ReceitaModel.id == id).first()
 
 
-@router.delete("/{id}",
+@router.delete("/receita/{id}",
     tags=["receita"],
     name="receita_delete",
     summary="Receita Delete",
@@ -426,7 +434,7 @@ async def create_pedido(pedido: PedidoScherma, db: Session = Depends(get_db)) ->
     db.refresh(db_pedido)
     return db_pedido
 
-@router.delete("/{id}",
+@router.delete("/pedido/{id}",
     tags=["pedido"],
     name="pedido_delete",
     summary="Pedido Delete",
@@ -488,9 +496,17 @@ async def update_pedido(id: int, pedido: PedidoScherma, db: Session = Depends(ge
     status_code=200,
     response_model=List[CategoriaScherma],
     )
-async def categoria_index(db: Session = Depends(get_db)) -> List[CategoriaModel]:
-    """Lista todas as categorias cadastradas."""
-    return db.query(CategoriaModel).all()
+def listar_categorias(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=100),
+    db: Session = Depends(get_db)
+):
+    """
+    Retorna uma lista paginada de receitas.
+    """
+    offset = (page - 1) * page_size
+    categorias = db.query(CategoriaModel).offset(offset).limit(page_size).all()
+    return categorias
 
 @router.get('/categoria/{id}',
     tags=['categoria'],
@@ -539,7 +555,7 @@ async def create_categoria(categoria: CategoriaScherma, db: Session = Depends(ge
     return db_categoria
 
 @router.patch(
-    "/categorias/{id}",
+    "/categoria/{id}",
     tags=["categoria"],
     name="categoria_update",
     summary="Categoria Update",
@@ -569,7 +585,7 @@ async def update_categoria(id: int, categoria: CategoriaScherma, db: Session = D
     db.commit()
     return db.query(CategoriaModel).filter(CategoriaModel.id == id).first()
 
-@router.delete('/categorias/{id}',
+@router.delete('/categoria/{id}',
     tags=['categoria'],
     name='categoria_delete',
     summary='Categoria Delete',
