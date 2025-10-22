@@ -9,7 +9,6 @@ class ReceitaScherma(BaseModel):
     Args:
        Scherma BaseModel (_type_): _description_
     """
-
     nome_receita: str
     porcao_rendimento: str
     ingrediente: list[str]
