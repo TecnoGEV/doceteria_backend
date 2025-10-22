@@ -1,5 +1,3 @@
-from typing import List
-
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
@@ -137,7 +135,7 @@ class ProdutoModel(Base):
         "CategoriaModel", back_populates="produtos"
     )
 
-    itens: Mapped[List["ItemModel"]] = relationship(
+    itens: Mapped[list["ItemModel"]] = relationship(
         "ItemModel", back_populates="produto"
     )
 

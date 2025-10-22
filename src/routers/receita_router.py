@@ -1,4 +1,4 @@
-from typing import Annotated, List
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
@@ -16,6 +16,7 @@ from src.scherma import (
 receita_router = APIRouter()
 tag = "Receita"
 
+
 @receita_router.get(
     "/receitas",
     tags=[tag],
@@ -30,7 +31,7 @@ def listar_receitas(
     db: Annotated[Session, Depends(get_db)],
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
-) -> List[ReceitaModel]:
+) -> list[ReceitaModel]:
     """
     Retorna uma lista paginada de receitas.
     """

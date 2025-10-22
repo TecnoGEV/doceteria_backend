@@ -1,4 +1,4 @@
-from typing import Annotated, List
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
@@ -16,9 +16,11 @@ from src.scherma import (
 categoria_router = APIRouter()
 tag = "Categoria"
 
+
 @categoria_router.get("/", include_in_schema=False)
 def read_root():
     return {"message": "Hello World"}
+
 
 @categoria_router.get(
     "/categorias",
@@ -34,7 +36,7 @@ def listar_categorias(
     db: Annotated[Session, Depends(get_db)],
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
-) -> List[CategoriaModel]:
+) -> list[CategoriaModel]:
     """
     Retorna uma lista paginada de categorias.
     """

@@ -1,4 +1,4 @@
-from typing import Annotated, List
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
@@ -16,6 +16,7 @@ from src.scherma import (
 produto_router = APIRouter()
 tag = "Produto"
 
+
 @produto_router.get(
     "/produtos",
     tags=[tag],
@@ -24,13 +25,13 @@ tag = "Produto"
     description="Produto Index",
     response_description="Produto Index",
     status_code=200,
-    response_model=List[ProdutoScherma],
+    response_model=list[ProdutoScherma],
 )
 async def produto_index(
     db: Annotated[Session, Depends(get_db)],
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
-) -> List[ProdutoModel]:
+) -> list[ProdutoModel]:
     """Lista todos os produtos cadastrados."""
     offset = (page - 1) * page_size
     produtos = db.query(ProdutoModel).offset(offset).limit(page_size).all()

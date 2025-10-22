@@ -10,7 +10,6 @@ from src.routers.produto_router import produto_router
 from src.routers.receita_router import receita_router
 from src.routers.venda_router import venda_router
 
-
 app = FastAPI(title="Doceteria API", version="0.0.1-beta")
 
 Base.metadata.create_all(bind=engine)

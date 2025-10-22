@@ -1,7 +1,5 @@
 """Schemas for the doceteria backend."""
 
-from typing import List
-
 from pydantic import BaseModel
 
 
@@ -86,7 +84,7 @@ class ItemScherma(BaseModel):
 
 class PedidoScherma(BaseModel):
     cliente_id: int
-    itens_pedido: List[ItemScherma]
+    itens_pedido: list[ItemScherma]
     preco_total: float
 
     class Config:

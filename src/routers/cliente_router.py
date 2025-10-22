@@ -1,4 +1,4 @@
-from typing import Annotated, List
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import JSONResponse
@@ -11,6 +11,7 @@ from src.scherma import ClienteScherma
 cliente_router = APIRouter()
 tag = "Cliente"
 
+
 @cliente_router.get(
     "/clientes",
     tags=[tag],
@@ -19,13 +20,13 @@ tag = "Cliente"
     description="Retorna uma lista paginada de clientes.",
     response_description="Lista de clientes",
     status_code=status.HTTP_200_OK,
-    response_model=List[ClienteScherma],
+    response_model=list[ClienteScherma],
 )
 def listar_clientes(
     db: Annotated[Session, Depends(get_db)],
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
-) -> List[ClienteModel]:
+) -> list[ClienteModel]:
     offset = (page - 1) * page_size
     clientes = db.query(ClienteModel).offset(offset).limit(page_size).all()
     return clientes
