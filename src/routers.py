@@ -429,7 +429,7 @@ async def update_venda(
 
 
 @router.delete(
-    "/{id}",
+    "/venda/{id}",
     tags=["venda"],
     name="venda_delete",
     summary="Venda Delete",
