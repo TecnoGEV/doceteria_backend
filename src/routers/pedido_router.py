@@ -1,6 +1,6 @@
 from typing import Annotated, List
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, status
 from fastapi.responses import JSONResponse
 from sqlalchemy import update
 from sqlalchemy.orm import Session
@@ -145,7 +145,7 @@ async def delete_pedido(
     """
     db.query(PedidoModel).filter(PedidoModel.id == id_).delete()
     db.commit()
-    return JSONResponse("Pedido removido com sucesso.", status_code=204)
+    return JSONResponse("Pedido removido com sucesso.", status_code=status.HTTP_200_OK)
 
 
 @pedido_router.patch(
