@@ -14,18 +14,15 @@ from src.scherma import (
 )
 
 categoria_router = APIRouter()
+tag = "Categoria"
 
-
-@categoria_router.get("/")
+@categoria_router.get("/", include_in_schema=False)
 def read_root():
     return {"message": "Hello World"}
 
-
-
-
 @categoria_router.get(
     "/categorias",
-    tags=["categoria"],
+    tags=[tag],
     name="categoria_index",
     summary="Categoria Index",
     description="Categoria Index",
@@ -48,7 +45,7 @@ def listar_categorias(
 
 @categoria_router.get(
     "/categoria/{id}",
-    tags=["categoria"],
+    tags=[tag],
     name="categoria_show",
     summary="Categoria Show",
     description="Categoria Show",
@@ -73,7 +70,7 @@ async def show_categoria(
 
 @categoria_router.post(
     "/categorias",
-    tags=["categoria"],
+    tags=[tag],
     name="categoria_create",
     summary="Categoria Create",
     description="Categoria Create",
@@ -102,7 +99,7 @@ async def create_categoria(
 
 @categoria_router.patch(
     "/categoria/{id}",
-    tags=["categoria"],
+    tags=[tag],
     name="categoria_update",
     summary="Categoria Update",
     description="Categoria Update",
@@ -136,7 +133,7 @@ async def update_categoria(
 
 @categoria_router.delete(
     "/categoria/{id}",
-    tags=["categoria"],
+    tags=[tag],
     name="categoria_delete",
     summary="Categoria Delete",
     description="Categoria Delete",

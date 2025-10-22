@@ -14,10 +14,11 @@ from src.scherma import (
 )
 
 produto_router = APIRouter()
+tag = "Produto"
 
 @produto_router.get(
     "/produtos",
-    tags=["produto"],
+    tags=[tag],
     name="produto_index",
     summary="Produto Index",
     description="Produto Index",
@@ -38,7 +39,7 @@ async def produto_index(
 
 @produto_router.get(
     "/produtos/{id}",
-    tags=["produto"],
+    tags=[tag],
     name="produto_show",
     summary="Produto Show",
     description="Produto Show",
@@ -63,7 +64,7 @@ async def show_produto(
 
 @produto_router.post(
     "/produtos",
-    tags=["produto"],
+    tags=[tag],
     name="produto_create",
     summary="Produto Create",
     description="Produto Create",
@@ -106,7 +107,7 @@ async def create_produto(
 
 @produto_router.patch(
     "/produtos/{id}",
-    tags=["produto"],
+    tags=[tag],
     name="produto_update",
     summary="Produto Update",
     description="Produto Update",
@@ -141,7 +142,7 @@ async def update_produto(
 
 @produto_router.delete(
     "/{id}",
-    tags=["produto"],
+    tags=[tag],
     name="produto_delete",
     summary="Produto Delete",
     description="Produto Delete",

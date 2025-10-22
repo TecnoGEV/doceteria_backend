@@ -9,11 +9,11 @@ from src.models import ClienteModel
 from src.scherma import ClienteScherma
 
 cliente_router = APIRouter()
-
+tag = "Cliente"
 
 @cliente_router.get(
     "/clientes",
-    tags=["cliente"],
+    tags=[tag],
     name="cliente_index",
     summary="Listar clientes",
     description="Retorna uma lista paginada de clientes.",
@@ -33,7 +33,7 @@ def listar_clientes(
 
 @cliente_router.post(
     "/clientes",
-    tags=["cliente"],
+    tags=[tag],
     name="cliente_store",
     summary="Criar cliente",
     description="Cria um novo cliente no sistema.",
@@ -53,7 +53,7 @@ def criar_cliente(
 
 @cliente_router.get(
     "/clientes/{id}",
-    tags=["cliente"],
+    tags=[tag],
     name="cliente_show",
     summary="Mostrar cliente",
     description="Retorna um cliente específico pelo ID.",
@@ -70,7 +70,7 @@ def mostrar_cliente(id_: int, db: Annotated[Session, Depends(get_db)]) -> Client
 
 @cliente_router.patch(
     "/clientes/{id}",
-    tags=["cliente"],
+    tags=[tag],
     name="cliente_update",
     summary="Atualizar cliente",
     description="Atualiza os dados de um cliente existente.",
@@ -93,7 +93,7 @@ def atualizar_cliente(
 
 @cliente_router.delete(
     "/clientes/{id}",
-    tags=["cliente"],
+    tags=[tag],
     name="cliente_destroy",
     summary="Excluir cliente",
     description="Remove um cliente do sistema.",

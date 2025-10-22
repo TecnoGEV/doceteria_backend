@@ -16,9 +16,11 @@ from src.scherma import (
 )
 
 pedido_router = APIRouter()
+tag = "Pedido"
+
 @pedido_router.get(
     "/pedidos",
-    tags=["pedido"],
+    tags=[tag],
     name="pedido_index",
     summary="Pedido Index",
     description="Pedido Index",
@@ -39,7 +41,7 @@ async def pedido_index(
 
 @pedido_router.get(
     "/pedido/{id}",
-    tags=["pedido"],
+    tags=[tag],
     name="pedido_show",
     summary="Pedido Show",
     description="Pedido Show",
@@ -64,7 +66,7 @@ async def show_pedido(
 
 @pedido_router.post(
     "/pedidos",
-    tags=["pedido"],
+    tags=[tag],
     name="pedido_create",
     summary="Pedido Create",
     description="Pedido Create",
@@ -124,7 +126,7 @@ async def create_pedido(
 
 @pedido_router.delete(
     "/pedido/{id}",
-    tags=["pedido"],
+    tags=[tag],
     name="pedido_delete",
     summary="Pedido Delete",
     description="Pedido Delete",
@@ -150,7 +152,7 @@ async def delete_pedido(
 
 @pedido_router.patch(
     "/pedidos/{id}",
-    tags=["pedido"],
+    tags=[tag],
     name="pedido_update",
     summary="Pedido Update",
     description="Pedido Update",

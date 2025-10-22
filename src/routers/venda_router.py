@@ -14,10 +14,11 @@ from src.scherma import (
 )
 
 venda_router = APIRouter()
+tag = "Venda"
 
 @venda_router.get(
     "/vendas",
-    tags=["venda"],
+    tags=[tag],
     name="venda_index",
     summary="Venda Index",
     description="Venda Index",
@@ -37,7 +38,7 @@ async def venda_index(
 
 @venda_router.get(
     "/venda/{id}",
-    tags=["venda"],
+    tags=[tag],
     name="venda_show",
     summary="Venda Show",
     description="Venda Show",
@@ -62,7 +63,7 @@ async def show_venda(
 
 @venda_router.post(
     "/vendas",
-    tags=["venda"],
+    tags=[tag],
     name="venda_create",
     summary="Venda Create",
     description="Venda Create",
@@ -91,7 +92,7 @@ async def create_venda(
 
 @venda_router.patch(
     "/vendas/{id}",
-    tags=["venda"],
+    tags=[tag],
     name="venda_update",
     summary="Venda Update",
     description="Venda Update",
@@ -125,7 +126,7 @@ async def update_venda(
 
 @venda_router.delete(
     "/venda/{id}",
-    tags=["venda"],
+    tags=[tag],
     name="venda_delete",
     summary="Venda Delete",
     description="Venda Delete",

@@ -14,10 +14,11 @@ from src.scherma import (
 )
 
 receita_router = APIRouter()
+tag = "Receita"
 
 @receita_router.get(
     "/receitas",
-    tags=["receita"],
+    tags=[tag],
     name="receita_index",
     summary="Receita Index",
     description="Receita Index",
@@ -40,7 +41,7 @@ def listar_receitas(
 
 @receita_router.post(
     "/receitas",
-    tags=["receita"],
+    tags=[tag],
     name="receita_create",
     summary="Receita Create",
     description="Receita Create",
@@ -69,7 +70,7 @@ async def create_receita(
 
 @receita_router.get(
     "/receita/{id}",
-    tags=["receita"],
+    tags=[tag],
     name="receita_show",
     summary="Receita Show",
     description="Receita Show",
@@ -94,7 +95,7 @@ async def show_receita(
 
 @receita_router.patch(
     "/receita/{id}",
-    tags=["receita"],
+    tags=[tag],
     name="receita_update",
     summary="Receita Update",
     description="Receita Update",
@@ -128,7 +129,7 @@ async def update_receita(
 
 @receita_router.delete(
     "/receita/{id}",
-    tags=["receita"],
+    tags=[tag],
     name="receita_delete",
     summary="Receita Delete",
     description="Receita Delete",
