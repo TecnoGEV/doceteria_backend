@@ -10,39 +10,14 @@ dependencies = [
     "pytest>=8.4.2",
     "sqlalchemy>=2.0.44",
     "taskipy>=1.14.1",
-    "uniconv>=1.0.1",
     "uvicorn>=0.38.0",
     "httpx>=0.27.0",
     "isort>=7.0.0",
     "alembic>=1.17.0",
+    "flake8>=7.3.0",
+    "black>=25.9.0",
+    "ruff>=0.14.1",
 ]
-
-[tool.ruff]
-line-length = 88
-target-version = "py311"
-fix = true
-exclude = [
-    ".venv",
-    "migrations",
-    "docs",
-]
-
-[tool.ruff.lint]
-select = ["E", "F", "W", "I", "B", "C4", "N", "UP"]
-ignore = []
-extend-select = ["B"]
-
-
-[tool.isort]
-profile = "black"
-line_length = 88
-multi_line_output = 3
-include_trailing_comma = true
-force_grid_wrap = 0
-combine_as_imports = true
-skip = [".venv", "docs", "migrations"]
-# skip_glob = ["tests/data/*"]
-
 
 [tool.black]
 line-length = 88
@@ -52,28 +27,37 @@ exclude = '''
     .venv
   | migrations
   | docs
-)/
-'''
+)/'''
 
-[tool.pytest.ini_options]
-addopts = "--strict-markers --strict-paths"
-pythonpath = ["."]
+[tool.isort]
+profile = "black"
+line_length = 88
+skip = [".venv", "docs", "migrations"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+fix = true
+exclude = [".venv", "migrations", "docs"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "C4", "N", "UP"]
+ignore = []
+
+[tool.flake8]
+exclude = [".venv","__pycache__","migrations", "docs"]
+max-line-length = 88
+max-complexity = 10
+ignore = ["E203", "W503"]  # conflito com Black
 
 [tool.taskipy.tasks]
-# Lint e formatação
-lint = "uv run ruff check ."
-fix = "uv run ruff check . --fix"
-format = "uv run black . && uv run isort ."
-check = "uv run ruff check --diff ."
-# Run test
-test = "uv run pytest"
-# Run server
-server = "uv run uvicorn src.main:app --reload"
+# Lint completo: Ruff, Flake8, Black, isort
+lint = "uv run ruff check . && uv run flake8 src tests config --statistics --count --max-complexity=10 --verbose --max-line-length=88"
+fix = "uv run ruff check . --fix && uv run black . && uv run isort ."
+lint_fix = "uv run task lint && uv run task fix"
 
-[dependency-groups]
-dev = [
-    "black>=25.9.0",
-    "pytest>=8.4.2",
-    "ruff>=0.14.1",
-    "taskipy>=1.14.1",
-]
+# Test
+test = "uv run pytest"
+
+# Server
+server = "uv run uvicorn src.main:app --reload"

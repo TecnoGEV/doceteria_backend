@@ -80,7 +80,9 @@ def mostrar_cliente(id_: int, db: Annotated[Session, Depends(get_db)]) -> Client
     response_model=ClienteScherma,
 )
 def atualizar_cliente(
-    id_: int, cliente_data: ClienteScherma, db: Annotated[Session, Depends(get_db)]
+    id_: int,
+    cliente_data: ClienteScherma,
+    db: Annotated[Session, Depends(get_db)],
 ) -> ClienteModel:
     cliente = db.query(ClienteModel).filter(ClienteModel.id == id).first()
     if not cliente:

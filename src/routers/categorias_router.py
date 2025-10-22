@@ -110,7 +110,9 @@ async def create_categoria(
     response_model=CategoriaScherma,
 )
 async def update_categoria(
-    id_: int, categoria: CategoriaScherma, db: Annotated[Session, Depends(get_db)]
+    id_: int,
+    categoria: CategoriaScherma,
+    db: Annotated[Session, Depends(get_db)],
 ) -> CategoriaModel | None:
     """
     Atualiza uma categoria existente.
