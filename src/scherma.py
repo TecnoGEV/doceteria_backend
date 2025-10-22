@@ -1,5 +1,7 @@
 """Schemas for the doceteria backend."""
 
+from typing import List
+
 from pydantic import BaseModel
 
 
@@ -9,6 +11,7 @@ class ReceitaScherma(BaseModel):
     Args:
        Scherma BaseModel (_type_): _description_
     """
+
     nome_receita: str
     porcao_rendimento: str
     ingrediente: list[str]
@@ -56,26 +59,41 @@ class ProdutoScherma(BaseModel):
     preco_unidade: float
     unidade: str
     quantidade: float
-    categoria: CategoriaScherma
+    categoria_id: int
 
     class Config:
         from_attributes = True
 
-
-class VendaScherma(BaseModel):
-    nome_cliente: str
+class ClienteScherma(BaseModel):
+    nome: str
     telefone: str
-    item: list[ProdutoScherma]
+    endereco: str
 
     class Config:
         from_attributes = True
 
+class ItemScherma(BaseModel):
+    produto_id: int
+    pedido_id: int
+    quantidade: float
+    preco_unitario: float
+    
+    class Config:
+        from_attributes = True
 
 class PedidoScherma(BaseModel):
-    venda: VendaScherma
-    produto: ProdutoScherma
-    quantidade: float
-    preco: float
+    cliente_id: int
+    itens_pedido: List[ItemScherma]
+    preco_total: float
 
     class Config:
         from_attributes = True
+
+class VendaScherma(BaseModel):
+    pedido: PedidoScherma
+    forma_pagamento: str
+    status_venda: str
+
+    class Config:
+        from_attributes = True
+

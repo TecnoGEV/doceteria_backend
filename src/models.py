@@ -1,4 +1,4 @@
-"""SQLAlchemy ORM models for the doceteria backend."""
+from typing import List
 
 from sqlalchemy import Column, Float, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
@@ -19,7 +19,29 @@ receita_ingrediente_table = Table(
 )
 
 
-class Ingrediente(Base):
+class ClienteModel(Base):
+    """
+    Classe que representa um cliente na doceteria.
+
+    Attributes:
+        id (int): O ID do cliente.
+        nome (str): O nome do cliente.
+        telefone (str): O telefone do cliente.
+        endereco (str): O endereço do cliente.
+    """
+
+    __tablename__ = "clientes"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    nome: Mapped[str] = mapped_column(String(100), nullable=False)
+    telefone: Mapped[str] = mapped_column(String(15), nullable=False)
+    endereco: Mapped[str] = mapped_column(String(255), nullable=False)
+
+    class Config:
+        from_attributes = True
+
+
+class IngredienteModel(Base):
     """
     Classe que representa um ingrediente na doceteria.
 
@@ -34,15 +56,16 @@ class Ingrediente(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     nome: Mapped[str] = mapped_column(String(100))
     # Relação inversa com Receita
-    receitas: Mapped[list["Receita"]] = relationship(
-        "Receita", secondary=receita_ingrediente_table, back_populates="ingredientes"
+    receitas: Mapped[list["ReceitaModel"]] = relationship(
+        "ReceitaModel",
+        secondary=receita_ingrediente_table,
+        back_populates="ingredientes",
     )
 
 
-class Receita(Base):
+class ReceitaModel(Base):
     """
     Classe que representa uma receita na doceteria.
-
     Attributes:
         id (int): O ID da receita.
         nome_receita (str): O nome da receita.
@@ -67,112 +90,106 @@ class Receita(Base):
     preco_sugerido: Mapped[float] = mapped_column(Float)
     preco_venda: Mapped[float] = mapped_column(Float)
     custo_porcao: Mapped[float] = mapped_column(Float)
+    custo_porcao: Mapped[float] = mapped_column(Float)
     custo_total: Mapped[float] = mapped_column(Float)
     lucro_sugerido: Mapped[float] = mapped_column(Float)
 
     # Relação Many-to-Many com Ingredientes
-    ingredientes: Mapped[list["Ingrediente"]] = relationship(
-        "Ingrediente", secondary=receita_ingrediente_table, back_populates="receitas"
+    ingredientes: Mapped[list["IngredienteModel"]] = relationship(
+        "IngredienteModel",
+        secondary=receita_ingrediente_table,
+        back_populates="receitas",
     )
 
 
-class Categoria(Base):
-    """
-    Classe que representa uma categoria na doceteria.
-
-    Attributes:
-        id (int): O ID da categoria.
-        categoria (str): O nome da categoria.
-    """
-
+# -------------------------------
+# Categoria
+# -------------------------------
+class CategoriaModel(Base):
     __tablename__ = "categorias"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    categoria: Mapped[str] = mapped_column(String(50))
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    categoria: Mapped[str] = mapped_column(String(100), nullable=False)
 
-    produtos: Mapped[list["Produto"]] = relationship(
-        "Produto", back_populates="categoria"
+    produtos: Mapped[list["ProdutoModel"]] = relationship(
+        "ProdutoModel", back_populates="categoria"
     )
 
 
-class Produto(Base):
-    """
-    Classe que representa um produto na doceteria.
-
-    Attributes:
-        id (int): O ID do produto.
-        nome_produto (str): O nome do produto.
-        receita_id (int): O ID da receita associada ao produto.
-        receita (Receita): A receita associada ao produto.
-        pedidos (List[Pedido]): A lista de pedidos relacionados ao produto.
-    """
-
+# -------------------------------
+# Produto
+# -------------------------------
+class ProdutoModel(Base):
+    
     __tablename__ = "produtos"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    nome_produto: Mapped[str] = mapped_column(String(150))
-    data_validade: Mapped[str] = mapped_column(String(50))
-    marca: Mapped[str] = mapped_column(String(50))
-    codigo_barras: Mapped[str] = mapped_column(String(50), unique=True, nullable=True)
-    preco_unidade: Mapped[float] = mapped_column(Float)
-    unidade: Mapped[str] = mapped_column(String(50))
-    quantidade: Mapped[float] = mapped_column(Float)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    nome_produto: Mapped[str] = mapped_column(String(150), nullable=False)
+    data_validade: Mapped[str] = mapped_column(String(20), nullable=False)
+    marca: Mapped[str] = mapped_column(String(100), nullable=False)
+    codigo_barras: Mapped[str] = mapped_column(String(50), unique=True)
+    preco_unidade: Mapped[float] = mapped_column(Float, nullable=False)
+    unidade: Mapped[str] = mapped_column(String(20), nullable=False)
+    quantidade: Mapped[float] = mapped_column(Float, nullable=False)
 
-    categoria_id: Mapped[int] = mapped_column(
-        ForeignKey("categorias.id"), nullable=True
+    categoria_id: Mapped[int] = mapped_column(ForeignKey("categorias.id"))
+    categoria: Mapped["CategoriaModel"] = relationship(
+        "CategoriaModel", back_populates="produtos"
     )
-    categoria: Mapped["Categoria"] = relationship(
-        "Categoria", back_populates="produtos"
+
+    itens: Mapped[List["ItemModel"]] = relationship(
+        "ItemModel", back_populates="produto"
     )
-    # Uma receita pode gerar vários produtos (1-N)
-    receita_id: Mapped[int] = mapped_column(ForeignKey("receitas.id"), nullable=True)
-    receita: Mapped["Receita"] = relationship("Receita")
-
-    pedidos: Mapped[list["Pedido"]] = relationship("Pedido", back_populates="produto")
 
 
-class Venda(Base):
-    """
-    Classe que representa uma venda na doceteria.
-
-    Attributes:
-        id (int): O ID da venda.
-        nome_cliente (str): O nome do cliente da venda.
-        telefone (str): O telefone do cliente da venda.
-        pedidos (List[Pedido]): A lista de pedidos relacionados à venda.
-    """
-
-    __tablename__ = "vendas"
-
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    nome_cliente: Mapped[str] = mapped_column(String(100))
-    telefone: Mapped[str] = mapped_column(String(20))
-
-    pedidos: Mapped[list["Pedido"]] = relationship("Pedido", back_populates="venda")
-
-
-class Pedido(Base):
-    """
-    Classe que representa um pedido na doceteria.
-
-    Attributes:
-        id (int): O ID do pedido.
-        quantidade (float): A quantidade do pedido.
-        preco (float): O preço do pedido.
-        venda_id (int): O ID da venda relacionada ao pedido.
-        produto_id (int): O ID do produto relacionado ao pedido.
-        venda (Venda): A venda relacionada ao pedido.
-        produto (Produto): O produto relacionado ao pedido.
-    """
-
+# -------------------------------
+# Pedido
+# -------------------------------
+class PedidoModel(Base):
+    
     __tablename__ = "pedidos"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    quantidade: Mapped[float] = mapped_column(Float)
-    preco: Mapped[float] = mapped_column(Float)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    quantidade: Mapped[int] = mapped_column(Integer, nullable=False)
+    preco_total: Mapped[float] = mapped_column(Float, nullable=False)
+    cliente_id: Mapped[int] = mapped_column(ForeignKey("clientes.id"))
+    
+    cliente: Mapped["ClienteModel"] = relationship("ClienteModel")
 
-    venda_id: Mapped[int] = mapped_column(ForeignKey("vendas.id"))
+    itens_pedido = relationship("ItemModel", back_populates="pedido", cascade="all, delete")
+
+    # 🔗 Relacionamento 1:1 com Venda
+    venda: Mapped["VendaModel"] = relationship(
+        "VendaModel",
+        back_populates="pedido",
+        uselist=False,  # garante 1:1
+        cascade="all, delete-orphan",
+    )
+
+
+# -------------------------------
+# Venda
+# -------------------------------
+class VendaModel(Base):
+    
+    __tablename__ = "vendas"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    pedido_id: Mapped[int] = mapped_column(ForeignKey("pedidos.id"), unique=True)
+    forma_pagamento: Mapped[str] = mapped_column(String(50), nullable=False)
+    status_venda: Mapped[str] = mapped_column(String(50), nullable=False)
+
+    pedido: Mapped["PedidoModel"] = relationship("PedidoModel", back_populates="venda")
+
+class ItemModel(Base):
+    
+    __tablename__ = "itens_pedido"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     produto_id: Mapped[int] = mapped_column(ForeignKey("produtos.id"))
+    pedido_id: Mapped[int] = mapped_column(ForeignKey("pedidos.id"))
+    quantidade: Mapped[float] = mapped_column(Float, nullable=False)
+    preco_unitario: Mapped[float] = mapped_column(Float, nullable=False)
 
-    venda: Mapped["Venda"] = relationship("Venda", back_populates="pedidos")
-    produto: Mapped["Produto"] = relationship("Produto", back_populates="pedidos")
+    produto: Mapped["ProdutoModel"] = relationship("ProdutoModel")
+    pedido = relationship("PedidoModel", back_populates="itens_pedido")

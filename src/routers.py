@@ -1,14 +1,24 @@
-from typing import Annotated
+from typing import Annotated, List
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import JSONResponse
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
-from src.models import Categoria, Pedido, Produto, Receita, Venda
+from src.models import (
+    CategoriaModel,
+    ClienteModel,
+    ItemModel,
+    PedidoModel,
+    ProdutoModel,
+    ReceitaModel,
+    VendaModel,
+)
 from src.scherma import (
     CategoriaScherma,
+    ClienteScherma,
+    ItemScherma,
     PedidoScherma,
     ProdutoScherma,
     ReceitaScherma,
@@ -37,12 +47,12 @@ def listar_receitas(
     db: Annotated[Session, Depends(get_db)],
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
-):
+) -> List[ReceitaModel]:
     """
     Retorna uma lista paginada de receitas.
     """
     offset = (page - 1) * page_size
-    receitas = db.query(Receita).offset(offset).limit(page_size).all()
+    receitas = db.query(ReceitaModel).offset(offset).limit(page_size).all()
     return receitas
 
 
@@ -58,7 +68,7 @@ def listar_receitas(
 )
 async def create_receita(
     receita: ReceitaScherma, db: Annotated[Session, Depends(get_db)]
-) -> Receita:
+) -> ReceitaModel:
     """
     Cria uma nova receita.
 
@@ -68,7 +78,7 @@ async def create_receita(
     Returns:
     Receita: A nova receita criada.
     """
-    db_receita = Receita(**receita.model_dump())
+    db_receita = ReceitaModel(**receita.model_dump())
     db.add(db_receita)
     db.commit()
     db.refresh(db_receita)
@@ -87,7 +97,7 @@ async def create_receita(
 )
 async def show_receita(
     id_: int, db: Annotated[Session, Depends(get_db)]
-) -> Receita | None:
+) -> ReceitaModel | None:
     """
     Mostra uma receita existente.
 
@@ -97,7 +107,7 @@ async def show_receita(
     Returns:
     Receita: A receita existente com o ID informado.
     """
-    return db.query(Receita).filter(Receita.id == id_).first()
+    return db.query(ReceitaModel).filter(ReceitaModel.id == id_).first()
 
 
 @router.patch(
@@ -112,7 +122,7 @@ async def show_receita(
 )
 async def update_receita(
     id_: int, receita: ReceitaScherma, db: Annotated[Session, Depends(get_db)]
-) -> Receita | None:
+) -> ReceitaModel | None:
     """
     Atualiza uma receita existente.
 
@@ -125,13 +135,13 @@ async def update_receita(
     """
     data = receita.model_dump(exclude_unset=True)
     stmt = (
-        update(Receita)
-        .where(Receita.id == id_)
-        .values({getattr(Receita, k): v for k, v in data.items()})
+        update(ReceitaModel)
+        .where(ReceitaModel.id == id_)
+        .values({getattr(ReceitaModel, k): v for k, v in data.items()})
     )
     db.execute(stmt)
     db.commit()
-    return db.query(Receita).filter(Receita.id == id_).first()
+    return db.query(ReceitaModel).filter(ReceitaModel.id == id_).first()
 
 
 @router.delete(
@@ -155,7 +165,7 @@ async def delete_receita(
     Returns:
     JSONResponse: Uma resposta JSON com uma mensagem de sucesso e status code 204.
     """
-    db.query(Receita).filter(Receita.id == id_).delete()
+    db.query(ReceitaModel).filter(ReceitaModel.id == id_).delete()
     db.commit()
     return JSONResponse("Receita removida com sucesso.", status_code=204)
 
@@ -174,10 +184,10 @@ async def produto_index(
     db: Annotated[Session, Depends(get_db)],
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
-) -> list[Produto]:
+) -> list[ProdutoModel]:
     """Lista todos os produtos cadastrados."""
     offset = (page - 1) * page_size
-    produtos = db.query(Produto).offset(offset).limit(page_size).all()
+    produtos = db.query(ProdutoModel).offset(offset).limit(page_size).all()
     return produtos
 
 
@@ -193,7 +203,7 @@ async def produto_index(
 )
 async def show_produto(
     id_: int, db: Annotated[Session, Depends(get_db)]
-) -> Produto | None:
+) -> ProdutoModel | None:
     """
     Mostra um produto existente.
 
@@ -203,7 +213,7 @@ async def show_produto(
     Returns:
     Produto: O produto existente com o ID informado.
     """
-    return db.query(Produto).filter(Produto.id == id_).first()
+    return db.query(ProdutoModel).filter(ProdutoModel.id == id_).first()
 
 
 @router.post(
@@ -218,7 +228,7 @@ async def show_produto(
 )
 async def create_produto(
     produto: ProdutoScherma, db: Annotated[Session, Depends(get_db)]
-) -> Produto:
+) -> ProdutoModel:
     """
     Cria um novo produto.
 
@@ -228,10 +238,24 @@ async def create_produto(
     Returns:
     Produto: O produto criado.
     """
-    db_produto = Produto(**produto.model_dump())
+
+    model = { **produto.model_dump() }
+    
+    db_produto = ProdutoModel(
+        nome_produto=model["nome_produto"],
+        data_validade=model["data_validade"],
+        marca=model["marca"],
+        codigo_barras=model["codigo_barras"],
+        preco_unidade=model["preco_unidade"],
+        unidade=model["unidade"],
+        quantidade=model["quantidade"],
+        categoria_id=model["categoria_id"],
+    )
+    
     db.add(db_produto)
     db.commit()
     db.refresh(db_produto)
+    
     return db_produto
 
 
@@ -247,7 +271,7 @@ async def create_produto(
 )
 async def update_produto(
     id_: int, produto: ProdutoScherma, db: Annotated[Session, Depends(get_db)]
-) -> Produto | None:
+) -> ProdutoModel | None:
     """
     Atualiza um produto existente.
 
@@ -261,13 +285,13 @@ async def update_produto(
 
     data = produto.model_dump(exclude_unset=True)
     stmt = (
-        update(Produto)
-        .where(Produto.id == id_)
-        .values({getattr(Produto, k): v for k, v in data.items()})
+        update(ProdutoModel)
+        .where(ProdutoModel.id == id_)
+        .values({getattr(ProdutoModel, k): v for k, v in data.items()})
     )
     db.execute(stmt)
     db.commit()
-    return db.query(Produto).filter(Produto.id == id_).first()
+    return db.query(ProdutoModel).filter(ProdutoModel.id == id_).first()
 
 
 @router.delete(
@@ -291,7 +315,7 @@ async def delete_produto(
     Returns:
     JSONResponse: Uma resposta JSON com uma mensagem de sucesso e status code 204.
     """
-    db.query(Produto).filter(Produto.id == id_).delete()
+    db.query(ProdutoModel).filter(ProdutoModel.id == id_).delete()
     db.commit()
     return JSONResponse("Produto removido com sucesso.", status_code=204)
 
@@ -310,10 +334,10 @@ async def venda_index(
     db: Annotated[Session, Depends(get_db)],
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
-) -> list[Venda]:
+) -> list[VendaModel]:
     """Lista todas as vendas cadastradas."""
     offset = (page - 1) * page_size
-    return db.query(Venda).offset(offset).limit(page_size).all()
+    return db.query(VendaModel).offset(offset).limit(page_size).all()
 
 
 @router.get(
@@ -326,7 +350,9 @@ async def venda_index(
     status_code=200,
     response_model=VendaScherma,
 )
-async def show_venda(id_: int, db: Annotated[Session, Depends(get_db)]) -> Venda | None:
+async def show_venda(
+    id_: int, db: Annotated[Session, Depends(get_db)]
+) -> VendaModel | None:
     """
     Mostra uma venda existente.
 
@@ -336,7 +362,7 @@ async def show_venda(id_: int, db: Annotated[Session, Depends(get_db)]) -> Venda
     Returns:
     Venda: A venda existente com o ID informado.
     """
-    return db.query(Venda).filter(Venda.id == id_).first()
+    return db.query(VendaModel).filter(VendaModel.id == id_).first()
 
 
 @router.post(
@@ -351,7 +377,7 @@ async def show_venda(id_: int, db: Annotated[Session, Depends(get_db)]) -> Venda
 )
 async def create_venda(
     venda: VendaScherma, db: Annotated[Session, Depends(get_db)]
-) -> Venda:
+) -> VendaModel:
     """
     Cria uma nova venda.
 
@@ -361,7 +387,7 @@ async def create_venda(
     Returns:
     Venda: A venda criada.
     """
-    db_venda = Venda(**venda.model_dump())
+    db_venda = VendaModel(**venda.model_dump())
     db.add(db_venda)
     db.commit()
     db.refresh(db_venda)
@@ -380,7 +406,7 @@ async def create_venda(
 )
 async def update_venda(
     id_: int, venda: VendaScherma, db: Annotated[Session, Depends(get_db)]
-) -> Venda | None:
+) -> VendaModel | None:
     """
     Atualiza uma venda existente.
 
@@ -393,13 +419,13 @@ async def update_venda(
     """
     data = venda.model_dump(exclude_unset=True)
     stmt = (
-        update(Venda)
-        .where(Venda.id == id_)
-        .values({getattr(Venda, k): v for k, v in data.items()})
+        update(VendaModel)
+        .where(VendaModel.id == id_)
+        .values({getattr(VendaModel, k): v for k, v in data.items()})
     )
     db.execute(stmt)
     db.commit()
-    return db.query(Venda).filter(Venda.id == id_).first()
+    return db.query(VendaModel).filter(VendaModel.id == id_).first()
 
 
 @router.delete(
@@ -423,7 +449,7 @@ async def delete_venda(
     Returns:
     JSONResponse: Uma resposta JSON com uma mensagem de sucesso e status code 204.
     """
-    db.query(Venda).filter(Venda.id == id_).delete()
+    db.query(VendaModel).filter(VendaModel.id == id_).delete()
     db.commit()
     return JSONResponse("Venda removida com sucesso.", status_code=204)
 
@@ -442,10 +468,10 @@ async def pedido_index(
     db: Annotated[Session, Depends(get_db)],
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
-) -> list[Pedido]:
+) -> list[PedidoModel]:
     """Lista todos os pedidos cadastrados."""
     offset = (page - 1) * page_size
-    receitas = db.query(Pedido).offset(offset).limit(page_size).all()
+    receitas = db.query(PedidoModel).offset(offset).limit(page_size).all()
     return receitas
 
 
@@ -461,7 +487,7 @@ async def pedido_index(
 )
 async def show_pedido(
     id_: int, db: Annotated[Session, Depends(get_db)]
-) -> Pedido | None:
+) -> PedidoModel | None:
     """
     Mostra um pedido existente.
 
@@ -471,7 +497,7 @@ async def show_pedido(
     Returns:
     Pedido: O pedido existente com o ID informado.
     """
-    return db.query(Pedido).filter(Pedido.id == id_).first()
+    return db.query(PedidoModel).filter(PedidoModel.id == id_).first()
 
 
 @router.post(
@@ -486,7 +512,7 @@ async def show_pedido(
 )
 async def create_pedido(
     pedido: PedidoScherma, db: Annotated[Session, Depends(get_db)]
-) -> Pedido:
+) -> PedidoModel | None:
     """
     Cria um novo pedido.
 
@@ -496,12 +522,43 @@ async def create_pedido(
     Returns:
     Pedido: O pedido criado.
     """
-    db_pedido = Pedido(**pedido.model_dump())
+    model = { **pedido.model_dump() }
+    
+    model['preco_total'] = sum(
+        item['preco_unitario'] * item['quantidade'] 
+        for item in model['itens_pedido']
+    )
+    
+    model['quantidade'] = model['itens_pedido'].__len__()
+    
+    db_pedido = PedidoModel(
+        cliente_id=model['cliente_id'],
+        preco_total=model['preco_total'],
+        quantidade=model['quantidade'],
+    )
+
     db.add(db_pedido)
     db.commit()
     db.refresh(db_pedido)
-    return db_pedido
 
+    for item in model['itens_pedido']:
+        item_selecionado = ItemScherma(
+            pedido_id=db_pedido.id,
+            produto_id=item['produto_id'],
+            quantidade=item['quantidade'],
+            preco_unitario=item['preco_unitario'],
+        )
+
+        db_item = ItemModel(**item_selecionado.model_dump())
+        db.add(db_item)
+        db.commit()
+        db.refresh(db_item)
+        
+    pedido_model = db.query(PedidoModel).filter(PedidoModel.id == db_pedido.id).first()
+
+    if pedido_model is None:
+        return None
+    return pedido_model
 
 @router.delete(
     "/pedido/{id}",
@@ -524,7 +581,7 @@ async def delete_pedido(
     Returns:
     JSONResponse: Uma resposta JSON com uma mensagem de sucesso e status code 204.
     """
-    db.query(Pedido).filter(Pedido.id == id_).delete()
+    db.query(PedidoModel).filter(PedidoModel.id == id_).delete()
     db.commit()
     return JSONResponse("Pedido removido com sucesso.", status_code=204)
 
@@ -541,7 +598,7 @@ async def delete_pedido(
 )
 async def update_pedido(
     id_: int, pedido: PedidoScherma, db: Annotated[Session, Depends(get_db)]
-) -> Pedido | None:
+) -> PedidoModel | None:
     """
     Atualiza um pedido existente.
 
@@ -554,13 +611,13 @@ async def update_pedido(
     """
     data = pedido.model_dump(exclude_unset=True)
     stmt = (
-        update(Pedido)
-        .where(Pedido.id == id_)
-        .values({getattr(Pedido, k): v for k, v in data.items()})
+        update(PedidoModel)
+        .where(PedidoModel.id == id_)
+        .values({getattr(PedidoModel, k): v for k, v in data.items()})
     )
     db.execute(stmt)
     db.commit()
-    return db.query(Pedido).filter(Pedido.id == id_).first()
+    return db.query(PedidoModel).filter(PedidoModel.id == id_).first()
 
 
 @router.get(
@@ -577,12 +634,12 @@ def listar_categorias(
     db: Annotated[Session, Depends(get_db)],
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
-):
+) -> List[CategoriaModel]:
     """
-    Retorna uma lista paginada de receitas.
+    Retorna uma lista paginada de categorias.
     """
     offset = (page - 1) * page_size
-    categorias = db.query(Categoria).offset(offset).limit(page_size).all()
+    categorias = db.query(CategoriaModel).offset(offset).limit(page_size).all()
     return categorias
 
 
@@ -598,7 +655,7 @@ def listar_categorias(
 )
 async def show_categoria(
     id_: int, db: Annotated[Session, Depends(get_db)]
-) -> Categoria | None:
+) -> CategoriaModel | None:
     """
     Mostra uma categoria existente.
 
@@ -608,7 +665,7 @@ async def show_categoria(
     Returns:
     Categoria: A categoria existente com o ID informado.
     """
-    return db.query(Categoria).filter(Categoria.id == id_).first()
+    return db.query(CategoriaModel).filter(CategoriaModel.id == id_).first()
 
 
 @router.post(
@@ -623,7 +680,7 @@ async def show_categoria(
 )
 async def create_categoria(
     categoria: CategoriaScherma, db: Annotated[Session, Depends(get_db)]
-) -> Categoria:
+) -> CategoriaModel:
     """
     Cria uma nova categoria.
 
@@ -633,7 +690,7 @@ async def create_categoria(
     Returns:
     Categoria: A categoria criada.
     """
-    db_categoria = Categoria(**categoria.model_dump())
+    db_categoria = CategoriaModel(**categoria.model_dump())
     db.add(db_categoria)
     db.commit()
     db.refresh(db_categoria)
@@ -652,7 +709,7 @@ async def create_categoria(
 )
 async def update_categoria(
     id_: int, categoria: CategoriaScherma, db: Annotated[Session, Depends(get_db)]
-) -> Categoria | None:
+) -> CategoriaModel | None:
     """
     Atualiza uma categoria existente.
 
@@ -665,13 +722,13 @@ async def update_categoria(
     """
     data = categoria.model_dump(exclude_unset=True)
     stmt = (
-        update(Categoria)
-        .where(Categoria.id == id_)
-        .values({getattr(Categoria, k): v for k, v in data.items()})
+        update(CategoriaModel)
+        .where(CategoriaModel.id == id_)
+        .values({getattr(CategoriaModel, k): v for k, v in data.items()})
     )
     db.execute(stmt)
     db.commit()
-    return db.query(Categoria).filter(Categoria.id == id_).first()
+    return db.query(CategoriaModel).filter(CategoriaModel.id == id_).first()
 
 
 @router.delete(
@@ -695,6 +752,104 @@ async def delete_categoria(
     Returns:
     JSONResponse: Uma resposta JSON com o código de status 204.
     """
-    db.query(Categoria).filter(Categoria.id == id_).delete()
+    db.query(CategoriaModel).filter(CategoriaModel.id == id_).delete()
     db.commit()
     return JSONResponse("Categoria removida com sucesso.", status_code=204)
+
+
+@router.get(
+    "/clientes",
+    tags=["cliente"],
+    name="cliente_index",
+    summary="Listar clientes",
+    description="Retorna uma lista paginada de clientes.",
+    response_description="Lista de clientes",
+    status_code=status.HTTP_200_OK,
+    response_model=List[ClienteScherma],
+)
+def listar_clientes(
+    db: Annotated[Session, Depends(get_db)],
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=100),
+) -> List[ClienteModel]:
+    offset = (page - 1) * page_size
+    clientes = db.query(ClienteModel).offset(offset).limit(page_size).all()
+    return clientes
+
+
+@router.post(
+    "/clientes",
+    tags=["cliente"],
+    name="cliente_store",
+    summary="Criar cliente",
+    description="Cria um novo cliente no sistema.",
+    response_description="Cliente criado com sucesso.",
+    status_code=status.HTTP_201_CREATED,
+    response_model=ClienteScherma,
+)
+def criar_cliente(
+    cliente: ClienteScherma, db: Annotated[Session, Depends(get_db)]
+) -> ClienteModel:
+    novo_cliente = ClienteModel(**cliente.model_dump())
+    db.add(novo_cliente)
+    db.commit()
+    db.refresh(novo_cliente)
+    return novo_cliente
+
+
+@router.get(
+    "/clientes/{id}",
+    tags=["cliente"],
+    name="cliente_show",
+    summary="Mostrar cliente",
+    description="Retorna um cliente específico pelo ID.",
+    response_description="Cliente retornado com sucesso.",
+    status_code=status.HTTP_200_OK,
+    response_model=ClienteScherma,
+)
+def mostrar_cliente(id_: int, db: Annotated[Session, Depends(get_db)]) -> ClienteModel:
+    cliente = db.query(ClienteModel).filter(ClienteModel.id == id_).first()
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado.")
+    return cliente
+
+
+@router.patch(
+    "/clientes/{id}",
+    tags=["cliente"],
+    name="cliente_update",
+    summary="Atualizar cliente",
+    description="Atualiza os dados de um cliente existente.",
+    response_description="Cliente atualizado com sucesso.",
+    status_code=status.HTTP_200_OK,
+    response_model=ClienteScherma,
+)
+def atualizar_cliente(
+    id_: int, cliente_data: ClienteScherma, db: Annotated[Session, Depends(get_db)]
+) -> ClienteModel:
+    cliente = db.query(ClienteModel).filter(ClienteModel.id == id).first()
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado.")
+    for key, value in cliente_data.model_dump(exclude_unset=True).items():
+        setattr(cliente, key, value)
+    db.commit()
+    db.refresh(cliente)
+    return cliente
+
+
+@router.delete(
+    "/clientes/{id}",
+    tags=["cliente"],
+    name="cliente_destroy",
+    summary="Excluir cliente",
+    description="Remove um cliente do sistema.",
+    response_description="Cliente excluído com sucesso.",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def deletar_cliente(id_: int, db: Annotated[Session, Depends(get_db)]):
+    cliente = db.query(ClienteModel).filter(ClienteModel.id == id_).first()
+    if not cliente:
+        raise HTTPException(status_code=404, detail="Cliente não encontrado.")
+    db.delete(cliente)
+    db.commit()
+    return None
