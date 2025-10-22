@@ -22,7 +22,7 @@ class ReceitaScherma(BaseModel):
     custo_total: float
     lucro_sugerido: float
 
-    class Config:
+    class  ConfigDict:
         """_summary_"""
 
         from_attributes = True
@@ -38,7 +38,7 @@ class CategoriaScherma(BaseModel):
 
     categoria: str
 
-    class Config:
+    class  ConfigDict:
         from_attributes = True
 
 
@@ -59,7 +59,7 @@ class ProdutoScherma(BaseModel):
     quantidade: float
     categoria_id: int
 
-    class Config:
+    class  ConfigDict:
         from_attributes = True
 
 
@@ -68,7 +68,7 @@ class ClienteScherma(BaseModel):
     telefone: str
     endereco: str
 
-    class Config:
+    class  ConfigDict:
         from_attributes = True
 
 
@@ -78,7 +78,7 @@ class ItemScherma(BaseModel):
     quantidade: float
     preco_unitario: float
 
-    class Config:
+    class  ConfigDict:
         from_attributes = True
 
 
@@ -87,7 +87,7 @@ class PedidoScherma(BaseModel):
     itens_pedido: list[ItemScherma]
     preco_total: float
 
-    class Config:
+    class   ConfigDictDict:
         from_attributes = True
 
 
@@ -96,5 +96,5 @@ class VendaScherma(BaseModel):
     forma_pagamento: str
     status_venda: str
 
-    class Config:
+    class   ConfigDictDict:
         from_attributes = True
