@@ -1,9 +1,13 @@
 from logging.config import fileConfig
+
 # from sqlalchemy import engine_from_config, pool
 from alembic import context
 
 # Importa a configuração e o Base do projeto
-from config.database import Base, get_engine  # <-- ajusta o caminho se estiver diferente
+from config.database import (  # <-- ajusta o caminho se estiver diferente
+    Base,
+    get_engine,
+)
 
 # Carrega config do alembic.ini
 config = context.config
@@ -32,15 +36,13 @@ def run_migrations_offline() -> None:
     with context.begin_transaction():
         context.run_migrations()
 
+
 def run_migrations_online() -> None:
     """Executa migrações no modo online (banco conectado)."""
     connectable = get_engine()
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, 
-            target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

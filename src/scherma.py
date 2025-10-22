@@ -64,6 +64,7 @@ class ProdutoScherma(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ClienteScherma(BaseModel):
     nome: str
     telefone: str
@@ -72,14 +73,16 @@ class ClienteScherma(BaseModel):
     class Config:
         from_attributes = True
 
+
 class ItemScherma(BaseModel):
     produto_id: int
     pedido_id: int
     quantidade: float
     preco_unitario: float
-    
+
     class Config:
         from_attributes = True
+
 
 class PedidoScherma(BaseModel):
     cliente_id: int
@@ -89,6 +92,7 @@ class PedidoScherma(BaseModel):
     class Config:
         from_attributes = True
 
+
 class VendaScherma(BaseModel):
     pedido: PedidoScherma
     forma_pagamento: str
@@ -96,4 +100,3 @@ class VendaScherma(BaseModel):
 
     class Config:
         from_attributes = True
-

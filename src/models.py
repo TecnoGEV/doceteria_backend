@@ -120,7 +120,7 @@ class CategoriaModel(Base):
 # Produto
 # -------------------------------
 class ProdutoModel(Base):
-    
+
     __tablename__ = "produtos"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -146,17 +146,19 @@ class ProdutoModel(Base):
 # Pedido
 # -------------------------------
 class PedidoModel(Base):
-    
+
     __tablename__ = "pedidos"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     quantidade: Mapped[int] = mapped_column(Integer, nullable=False)
     preco_total: Mapped[float] = mapped_column(Float, nullable=False)
     cliente_id: Mapped[int] = mapped_column(ForeignKey("clientes.id"))
-    
+
     cliente: Mapped["ClienteModel"] = relationship("ClienteModel")
 
-    itens_pedido = relationship("ItemModel", back_populates="pedido", cascade="all, delete")
+    itens_pedido = relationship(
+        "ItemModel", back_populates="pedido", cascade="all, delete"
+    )
 
     # 🔗 Relacionamento 1:1 com Venda
     venda: Mapped["VendaModel"] = relationship(
@@ -171,7 +173,7 @@ class PedidoModel(Base):
 # Venda
 # -------------------------------
 class VendaModel(Base):
-    
+
     __tablename__ = "vendas"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
@@ -181,8 +183,9 @@ class VendaModel(Base):
 
     pedido: Mapped["PedidoModel"] = relationship("PedidoModel", back_populates="venda")
 
+
 class ItemModel(Base):
-    
+
     __tablename__ = "itens_pedido"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
