@@ -1,4 +1,4 @@
-name: Restrict Pull Requests
+name: Restrict
 
 on:
   pull_request:
