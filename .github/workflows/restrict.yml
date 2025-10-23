@@ -1,0 +1,22 @@
+name: Restrict
+
+on:
+  pull_request:
+    branches:
+      - main  # alvo do PR
+
+jobs:
+  restrict:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar branch de origem
+        run: |
+          echo "Source branch: ${{ github.head_ref }}"
+          echo "Target branch: ${{ github.base_ref }}"
+
+          if [[ "${{ github.base_ref }}" == "main" && "${{ github.head_ref }}" != "develop" ]]; then
+            echo "❌ Pull Requests para 'main' só podem vir de 'develop'."
+            exit 1
+          fi
+
+          echo "✅ Pull Request válido."
