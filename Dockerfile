@@ -34,6 +34,3 @@ EXPOSE 8000
 
 # Comando de execução com Gunicorn + Uvicorn
 CMD ["uv", "run", "gunicorn", "src.main:app", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000", "--timeout", "120"]
-
-
-
