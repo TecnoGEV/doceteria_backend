@@ -6,12 +6,8 @@ from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
-from src.models import (
-    ProdutoModel,
-)
-from src.scherma import (
-    ProdutoScherma,
-)
+from src.models.produto_model import ProdutoModel
+from src.scherma import ProdutoScherma
 
 produto_router = APIRouter()
 tag = "Produto"
