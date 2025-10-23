@@ -1,10 +1,18 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.models import *
-
 from config.config_model import Base
 from config.database import engine
+from config.logger_custom import logger as log
+from src.models import (
+    CategoriaModel,
+    IngredienteModel,
+    ItemModel,
+    PedidoModel,
+    ProdutoModel,
+    ReceitaModel,
+    VendaModel,
+)
 from src.routers.categorias_router import categoria_router
 from src.routers.cliente_router import cliente_router
 from src.routers.pedido_router import pedido_router
@@ -13,6 +21,20 @@ from src.routers.receita_router import receita_router
 from src.routers.venda_router import venda_router
 
 app = FastAPI(title="Doceteria API", version="0.0.1-beta")
+
+
+def log_tables():
+    """Cria as tabelas no banco de dados."""
+    log.info(CategoriaModel.__table__)
+    log.info(ProdutoModel.__table__)
+    log.info(ReceitaModel.__table__)
+    log.info(IngredienteModel.__table__)
+    log.info(ItemModel.__table__)
+    log.info(PedidoModel.__table__)
+    log.info(VendaModel.__table__)
+
+
+log_tables()
 
 Base.metadata.create_all(bind=engine)
 

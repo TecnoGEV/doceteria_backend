@@ -3,6 +3,7 @@
 # Ingrediente Model
 # -------------------------------
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -36,7 +37,5 @@ class IngredienteModel(Base):
         "ReceitaModel",
         secondary=receita_ingrediente_table,
         back_populates="ingredientes",
-        lazy="selectin"
+        lazy="selectin",
     )
-
-

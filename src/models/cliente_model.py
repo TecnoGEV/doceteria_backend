@@ -16,6 +16,7 @@ from config.config_model import (
 if TYPE_CHECKING:
     from src.models.pedido_model import PedidoModel
 
+
 class ClienteModel(Base):
     """
     Classe que representa um cliente na doceteria.
@@ -34,9 +35,9 @@ class ClienteModel(Base):
     telefone: Mapped[str] = mapped_column(String(15), nullable=False)
     endereco: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    pedidos: Mapped[list[PedidoModel]] = relationship("PedidoModel", back_populates="cliente", lazy="selectin")
+    pedidos: Mapped[list[PedidoModel]] = relationship(
+        "PedidoModel", back_populates="cliente", lazy="selectin"
+    )
 
     class Config:
         from_attributes = True
-
-

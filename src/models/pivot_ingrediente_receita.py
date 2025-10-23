@@ -3,6 +3,7 @@
 # Pivot Table: Receita Ingrediente
 # -------------------------------
 """
+
 from sqlalchemy import Column, ForeignKey, Integer, Table
 
 from config.config_model import Base

@@ -5,6 +5,7 @@
 # -------------------------------
 #
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -17,6 +18,7 @@ from config.config_model import Base
 if TYPE_CHECKING:
     from src.models.categoria_model import CategoriaModel
     from src.models.item_model import ItemModel
+
 
 class ProdutoModel(Base):
 
@@ -32,7 +34,6 @@ class ProdutoModel(Base):
     quantidade: Mapped[float] = mapped_column(Float, nullable=False)
     categoria_id: Mapped[int] = mapped_column(ForeignKey("categorias.id"))
 
-
     categoria: Mapped[CategoriaModel] = relationship(
         "CategoriaModel", back_populates="produtos", lazy="selectin"
     )
@@ -40,4 +41,3 @@ class ProdutoModel(Base):
     itens_pedidos: Mapped[list[ItemModel]] = relationship(
         "ItemModel", back_populates="produto", lazy="selectin"
     )
-

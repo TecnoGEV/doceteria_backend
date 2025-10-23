@@ -1,10 +1,11 @@
-""" 
+"""
 #
 # ---------------------------------
 # Categoria Model
-# --------------------------------- 
-# 
+# ---------------------------------
+#
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -17,6 +18,7 @@ from config.config_model import Base
 if TYPE_CHECKING:
     from src.models.produto_model import ProdutoModel
 
+
 class CategoriaModel(Base):
     __tablename__ = "categorias"
 
@@ -24,7 +26,8 @@ class CategoriaModel(Base):
     categoria: Mapped[str] = mapped_column(String(100), nullable=False)
 
     produtos: Mapped[list[ProdutoModel]] = relationship(
-        "ProdutoModel", back_populates="categoria",
+        "ProdutoModel",
+        back_populates="categoria",
         cascade="all, delete",
-        lazy="selectin"
+        lazy="selectin",
     )

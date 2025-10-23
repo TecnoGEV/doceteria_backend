@@ -3,6 +3,7 @@
 # Item do Pedido Model
 # -------------------------------
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -16,6 +17,7 @@ if TYPE_CHECKING:
     from src.models.pedido_model import PedidoModel
     from src.models.produto_model import ProdutoModel
 
+
 class ItemModel(Base):
 
     __tablename__ = "itens_pedido"
@@ -26,5 +28,9 @@ class ItemModel(Base):
     quantidade: Mapped[float] = mapped_column(Float, nullable=False)
     preco_unitario: Mapped[float] = mapped_column(Float, nullable=False)
 
-    produto: Mapped[ProdutoModel] = relationship("ProdutoModel", back_populates="itens_pedidos", lazy="selectin")
-    pedido: Mapped[PedidoModel] = relationship("PedidoModel", back_populates="itens_pedido", lazy="selectin")
+    produto: Mapped[ProdutoModel] = relationship(
+        "ProdutoModel", back_populates="itens_pedidos", lazy="selectin"
+    )
+    pedido: Mapped[PedidoModel] = relationship(
+        "PedidoModel", back_populates="itens_pedido", lazy="selectin"
+    )
