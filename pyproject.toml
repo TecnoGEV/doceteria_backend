@@ -17,6 +17,7 @@ dependencies = [
     "flake8>=7.3.0",
     "black>=25.9.0",
     "ruff>=0.14.1",
+    "gunicorn>=23.0.0",
 ]
 
 [tool.black]
