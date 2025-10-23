@@ -6,12 +6,8 @@ from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
-from src.models import (
-    CategoriaModel,
-)
-from src.scherma import (
-    CategoriaScherma,
-)
+from src.models.categoria_model import CategoriaModel
+from src.scherma import CategoriaScherma
 
 categoria_router = APIRouter()
 tag = "Categoria"

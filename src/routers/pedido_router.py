@@ -6,10 +6,8 @@ from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
-from src.models import (
-    ItemModel,
-    PedidoModel,
-)
+from src.models.item_model import ItemModel
+from src.models.pedido_model import PedidoModel
 from src.scherma import (
     ItemScherma,
     PedidoScherma,

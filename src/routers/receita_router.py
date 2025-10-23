@@ -6,12 +6,8 @@ from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
-from src.models import (
-    ReceitaModel,
-)
-from src.scherma import (
-    ReceitaScherma,
-)
+from src.models.receita_model import ReceitaModel
+from src.scherma import ReceitaScherma
 
 receita_router = APIRouter()
 tag = "Receita"

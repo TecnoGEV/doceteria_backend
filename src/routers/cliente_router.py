@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
-from src.models import ClienteModel
+from src.models.cliente_model import ClienteModel
 from src.scherma import ClienteScherma
 
 cliente_router = APIRouter()
