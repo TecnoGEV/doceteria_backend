@@ -55,7 +55,6 @@ ignore = ["E203", "W503"]  # conflito com Black
 # Lint completo: Ruff, Flake8, Black, isort
 lint = "uv run ruff check . && uv run flake8 src tests config --statistics --count --max-complexity=10 --verbose --max-line-length=88"
 fix = "uv run ruff check . --fix && uv run black . && uv run isort ."
-lint_fix = "uv run task lint && uv run task fix"
 
 # Test
 test = "uv run pytest"
