@@ -3,6 +3,7 @@
 # Receita Model
 # -------------------------------
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -15,6 +16,7 @@ from src.models.pivot_ingrediente_receita import receita_ingrediente_table
 
 if TYPE_CHECKING:
     from src.models.ingrediente_model import IngredienteModel
+
 
 class ReceitaModel(Base):
     """
@@ -48,9 +50,9 @@ class ReceitaModel(Base):
     lucro_sugerido: Mapped[float] = mapped_column(Float)
 
     # Relação Many-to-Many com Ingredientes
-    ingredientes: Mapped[list["IngredienteModel"]] = relationship(
+    ingredientes: Mapped[list[IngredienteModel]] = relationship(
         "IngredienteModel",
         secondary=receita_ingrediente_table,
         back_populates="receitas",
-        lazy="selectin"
+        lazy="selectin",
     )

@@ -3,6 +3,7 @@
 # Pedido
 # -------------------------------
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -17,6 +18,7 @@ if TYPE_CHECKING:
     from src.models.item_model import ItemModel
     from src.models.venda_model import VendaModel
 
+
 class PedidoModel(Base):
 
     __tablename__ = "pedidos"
@@ -26,7 +28,9 @@ class PedidoModel(Base):
     preco_total: Mapped[float] = mapped_column(Float, nullable=False)
     cliente_id: Mapped[int] = mapped_column(ForeignKey("clientes.id"))
 
-    cliente: Mapped[ClienteModel] = relationship("ClienteModel", back_populates="pedidos", lazy="selectin")
+    cliente: Mapped[ClienteModel] = relationship(
+        "ClienteModel", back_populates="pedidos", lazy="selectin"
+    )
 
     itens_pedido: Mapped[list[ItemModel]] = relationship(
         "ItemModel", back_populates="pedido", cascade="all, delete", lazy="selectin"
@@ -38,5 +42,5 @@ class PedidoModel(Base):
         back_populates="pedido",
         uselist=False,  # garante 1:1
         cascade="all, delete-orphan",
-        lazy="selectin"
+        lazy="selectin",
     )

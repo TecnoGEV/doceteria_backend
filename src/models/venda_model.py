@@ -3,6 +3,7 @@
 # Venda model
 # -------------------------------
 """
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
@@ -15,6 +16,7 @@ from config.config_model import Base
 if TYPE_CHECKING:
     from src.models.pedido_model import PedidoModel
 
+
 class VendaModel(Base):
 
     __tablename__ = "vendas"
@@ -24,4 +26,6 @@ class VendaModel(Base):
     forma_pagamento: Mapped[str] = mapped_column(String(50), nullable=False)
     status_venda: Mapped[str] = mapped_column(String(50), nullable=False)
 
-    pedido: Mapped[PedidoModel] = relationship("PedidoModel", back_populates="venda", lazy="selectin")
+    pedido: Mapped[PedidoModel] = relationship(
+        "PedidoModel", back_populates="venda", lazy="selectin"
+    )
