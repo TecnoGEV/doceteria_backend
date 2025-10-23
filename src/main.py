@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from src.models import *
+
+from config.config_model import Base
 from config.database import engine
-from src.models import Base
 from src.routers.categorias_router import categoria_router
 from src.routers.cliente_router import cliente_router
 from src.routers.pedido_router import pedido_router

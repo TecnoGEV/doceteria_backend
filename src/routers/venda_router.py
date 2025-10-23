@@ -6,12 +6,8 @@ from sqlalchemy import update
 from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
-from src.models import (
-    VendaModel,
-)
-from src.scherma import (
-    VendaScherma,
-)
+from src.models.venda_model import VendaModel
+from src.scherma import VendaScherma
 
 venda_router = APIRouter()
 tag = "Venda"
