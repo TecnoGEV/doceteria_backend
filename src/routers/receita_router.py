@@ -5,9 +5,9 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 
-from src.dependencies import get_db
+from config.dependencies import get_db
 from src.models.receita_model import ReceitaModel
-from src.scherma import ReceitaScherma
+from src.schermas.receita_scherma import ReceitaScherma
 
 receita_router = APIRouter()
 tag = "Receita"
