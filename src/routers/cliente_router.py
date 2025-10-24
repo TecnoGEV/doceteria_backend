@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from src.dependencies import get_db
 from src.models.cliente_model import ClienteModel
-from src.scherma import ClienteScherma
+from src.schermas.cliente_scherma import ClienteScherma
 
 cliente_router = APIRouter()
 tag = "Cliente"
