@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 
-from src.dependencies import get_db
+from config.dependencies import get_db
 from src.models.item_model import ItemModel
 from src.models.pedido_model import PedidoModel
 from src.schermas.pedido_scherma import PedidoScherma

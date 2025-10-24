@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy import update
 from sqlalchemy.orm import Session
 
-from src.dependencies import get_db
+from config.dependencies import get_db
 from src.models.venda_model import VendaModel
 from src.schermas.venda_scherma import VendaScherma
 
